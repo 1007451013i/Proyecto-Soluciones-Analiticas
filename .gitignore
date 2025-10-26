@@ -1,0 +1,14 @@
+﻿# DVC
+.dvc/cache/
+.dvc/tmp/
+# Datos (los maneja DVC)
+data/
+# Jupyter / Python
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+# Entornos
+.venv/
+env/
+# Secretos
+kaggle.json
