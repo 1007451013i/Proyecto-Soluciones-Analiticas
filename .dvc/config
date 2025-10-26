@@ -1,6 +1,5 @@
 [core]
-    remote = uniandes_webdavs
-['remote "uniandes_webdavs"']
-    url = webdavs://uniandes-my.sharepoint.com/personal/v_villamilp_uniandes_edu_co/Documents/Grupo%20Despliegue%20de%20Soluciones%20Anal%C3%ADticas/DVC
-    user = i.valenzuela@uniandes.edu.co
-    ask_password = true
+    remote = onedrive_personal
+['remote "onedrive_personal"']
+    url = webdavs://d.docs.live.net/b387921550cc8713/Documents/DVC
+    user = israelevp@outlook.com
