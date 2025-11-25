@@ -1,0 +1,9 @@
+[core]
+    remote = gdrive_remote
+['remote "onedrive_personal"']
+    url = webdavs://d.docs.live.net/b387921550cc8713/Documents/DVC
+    user = israelevp@outlook.com
+['remote "gdrive_remote"']
+    url = gdrive://19URqJImw1z9evqmd5vv_jSdL99_dPKRC
+
+
