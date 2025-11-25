@@ -1,0 +1,35 @@
+# Nombre del paquete
+package_name: heart-model
+
+# Archivos de datos
+train_data_file: heart_train.csv
+test_data_file: heart_test.csv
+
+# Objetivo del modelo
+target: condition
+
+# Lista de características (si se deja vacía, se usarán todas las columnas de entrada)
+features:
+  - age
+  - sex
+  - cp
+  - trestbps
+  - chol
+  - fbs
+  - restecg
+  - thalach
+  - exang
+  - oldpeak
+  - slope
+  - ca
+  - thal
+
+# pipelines
+pipeline_name: heart-model
+pipeline_save_file: heart-model-output
+
+# fracción del conjunto de prueba
+test_size: 0.30
+
+# semilla
+random_state: 42
