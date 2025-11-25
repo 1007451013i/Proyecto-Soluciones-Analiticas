@@ -1,38 +1,85 @@
 # Manual de Usuario del Tablero
 
-Este documento explica cómo usar el tablero de predicción de enfermedad cardíaca basado en Regresión Logística (archivo `Dashboard.py`). El tablero consume una API de salud empaquetada en `Health-api.zip` y el modelo empaquetado en `package-src.zip`.
+Este documento explica cómo utilizar el tablero interactivo de predicción de enfermedad cardíaca construido en Dash (`Dashboard.py`), el cual se comunica con la API ubicada en la carpeta `Health-api/`. El tablero permite ingresar variables clínicas de un paciente y obtener una estimación inmediata del riesgo utilizando el modelo entrenado.
 
 ## 1. Requisitos previos
-- API de salud funcionando y accesible vía HTTP/HTTPS.
-- Endpoint disponible: `POST /predict` bajo una URL base (ej.: `http://localhost:8001/api/v1`).
-- Navegador web moderno (Chrome, Edge, Firefox).
+
+Para usar el tablero correctamente, asegúrese de que:
+
+- La **API esté ejecutándose** en `http://localhost:8001/api/v1`.
+- La API exponga los endpoints:
+  - `GET /health`  
+  - `POST /predict`
+- El tablero haya sido instalado con las dependencias del archivo `requirements.txt`.
+- Se cuente con un navegador moderno (Chrome, Edge o Firefox).
 
 ## 2. Acceso al tablero
-- Ejecute `python Dashboard.py`.
-- Abra el navegador en `http://127.0.0.1:8050/`.
+
+1) Desde la raíz del repositorio, ejecute:
+```
+`python Dashboard.py`
+```
+2) Abra su navegador en:
+```
+`http://localhost:8050/`.
+```
+
+El tablero cargará automáticamente la interfaz gráfica con el formulario y los resultados.
 
 ## 3. Estructura del tablero
-- **Encabezado**: título y descripción del sistema.
-- **Primera fila** (Formulario del paciente y configuración):
-  - Configuración de API: campo “URL de la API”.
-  - Formulario de paciente: campos clínicos y demográficos.
-- **Segunda fila** (Resultados y métricas):
-  - Indicador de riesgo, gráfico de probabilidad, factores de riesgo y comparación con valores de referencia.
-  - Métricas del modelo (Precision, AUC-ROC, F1 Score) y tiempo de respuesta.
+
+La interfaz se organiza en dos secciones principales:
+
+### **Panel izquierdo – Configuración y datos del paciente**
+Incluye:
+
+- **URL de la API**: debe ingresar  
+  `http://localhost:8001/api/v1`
+- **Formulario clínico** con los campos:
+  - `Edad`
+  - `Sexo` (0 = Femenino, 1 = Masculino)
+  - `Presión arterial en reposo (trestbps)`
+  - `Colesterol sérico (chol)`
+  - `Azúcar en ayunas (fbs)`
+  - `Frecuencia cardíaca máxima (thalach)`
+
+El tablero valida que todos los campos estén completos antes de permitir la predicción.
+
+### **Panel derecho – Resultados**
+Una vez enviada la información, se mostrarán:
+
+- Nivel de riesgo estimado (bajo, moderado o alto)
+- Gráfico tipo gauge con la probabilidad calculada
+- Factores de riesgo detectados según los valores ingresados
+- Comparación gráfica entre las variables del paciente y valores promedio
+- Métricas del modelo (Precision, F1, AUC)
+- Tiempo de respuesta de la API
 
 ## 4. Configuración de la API
-- Campo: `URL de la API` (ej.: `http://localhost:8001/api/v1`).
-- Validación: el botón “Realizar Prediccion” se deshabilita si la URL no empieza por `http://` o `https://`.
-- Si la URL es inválida, verá un mensaje de error pidiendo una URL válida.
+
+El tablero requiere una URL de API válida. Debe ingresar:
+```
+`http://localhost:8001/api/v1`
+```
+
+Si la URL no inicia con `http://` o `https://`, el tablero mostrará un mensaje indicando:
+
+> **ERROR: Ingrese una URL válida para la API**
+
+El botón **Realizar Predicción** permanecerá deshabilitado hasta que la URL sea válida.
 
 ## 5. Campos del formulario
-Complete todos los campos antes de predecir:
-- `Edad` (20–100)
-- `Sexo` (0: Femenino, 1: Masculino)
-- `Presión arterial` (`trestbps`)
-- `Colesterol sérico` (`chol`)
-- `Azúcar en ayunas` (`fbs`: 0/1)
-- `Frecuencia cardíaca máxima` (`thalach`)
+
+Debe completar todos los siguientes campos:
+
+ **Edad**: valores típicos entre 20 y 100 años  
+- **Sexo**:  
+  - 0 = Femenino  
+  - 1 = Masculino  
+- **Presión arterial (trestbps)**  
+- **Colesterol sérico (chol)**  
+- **Azúcar en ayunas (fbs)**: 0/1  
+- **Frecuencia cardíaca máxima (thalach)**
 - Parámetros adicionales:
   - `cp` (tipo de dolor en el pecho: 0–3)
   - `restecg` (ECG en reposo: 0–2)
@@ -42,47 +89,86 @@ Complete todos los campos antes de predecir:
   - `ca` (vasos mayores coloreados: 0–4)
   - `thal` (0–3)
 
+Los campos numéricos aceptan solo números válidos.
+
+Si algún campo está vacío, aparecerá:
+
+> **ERROR: Complete todos los campos**
+
 ## 6. Realizar una predicción
-1) Escriba la `URL de la API` (ej.: `http://localhost:8001/api/v1`).
-2) Complete el formulario de paciente.
-3) Haga clic en `Realizar Prediccion`.
-4) El tablero enviará un `POST` a `BASE_URL/predict` con el payload:
+
+1) Introduzca la URL de la API.  
+2) Llene todos los campos del formulario.  
+3) Presione **Realizar Predicción**.
+
+El tablero enviará automáticamente una solicitud `POST` a:
+```
+ `POST/predict`
+```
+Con un payload en este formato:
 ```
 {
-  "inputs": [{
-    "age": Edad,
-    "sex": Sexo,
-    "cp": cp,
-    "trestbps": Presión,
-    "chol": Colesterol,
-    "fbs": Azúcar,
-    "restecg": restecg,
-    "thalach": Frecuencia,
-    "exang": exang,
-    "oldpeak": oldpeak,
-    "slope": slope,
-    "ca": ca,
-    "thal": thal
-  }]
+"inputs": [{
+"age": 55,
+"sex": 1,
+"trestbps": 130,
+"chol": 240,
+"fbs": 0,
+"thalach": 150
+}]
 }
 ```
+La API devolverá una probabilidad y una predicción, que el tablero transformará en:
+
+- Nivel de riesgo  
+- Gráfico de probabilidad  
+- Factores detectados  
+- Comparaciones visuales  
 
 ## 7. Interpretación de resultados
-- **Nivel de Riesgo Cardiaco**:
-  - Bajo riesgo (< 40%)
-  - Riesgo moderado (40%–70%)
-  - Alto riesgo (≥ 70%)
-- **Gráfico de probabilidad** (Gauge): porcentaje estimado.
-- **Factores de riesgo**: lista simple basada en umbrales (
-  p. ej., colesterol > 240, presión > 140, azúcar en ayunas = 1, edad > 60).
-- **Comparación con valores de referencia**: barras comparativas de `Edad`, `Presión`, `Colesterol`, `Frecuencia Max` frente a promedios.
-- **Tiempo de respuesta**: segundos entre la solicitud a la API y la respuesta.
+El tablero clasifica el resultado en:
+
+- **Bajo riesgo** (< 40%)
+- **Riesgo moderado** (40%–70%)
+- **Alto riesgo** (≥ 70%)
+
+### **Gauge de probabilidad**
+Indica visualmente el porcentaje estimado de riesgo.
+
+### **Factores de riesgo**
+El tablero analizará automáticamente:
+
+- colesterol elevado  
+- presión arterial alta  
+- edad avanzada  
+- frecuencia cardíaca baja  
+- azúcar en ayunas positiva  
+
+Dependiendo de los valores ingresados.
+
+### **Comparación con valores de referencia**
+Se muestra un gráfico con:
+
+- edad  
+- presión  
+- colesterol  
+- frecuencia cardíaca  
+
+Comparados contra promedios clínicos típicos.
 
 ## 8. Mensajes y estados comunes
-- URL inválida: “ERROR: Ingrese una URL válida para la API”.
-- Campos incompletos: “ERROR: Complete todos los campos”.
-- Error de API (status != 200): se muestra el código y texto de la respuesta.
-- Excepción de conexión: “No se pudo obtener respuesta de la API”.
+- **URL inválida**  
+  > ERROR: Ingrese una URL válida para la API
+
+- **Campos incompletos**  
+  > ERROR: Complete todos los campos
+
+- **Error en la API (status ≠ 200)**  
+  Se mostrará el mensaje y código devuelto por la API.
+
+- **Fallo de conexión**  
+  > No se pudo obtener respuesta de la API  
+  Verifique que la API esté ejecutándose.
 
 ## 9. Buenas prácticas
 - Verifique que la API esté corriendo y accesible.
@@ -91,6 +177,12 @@ Complete todos los campos antes de predecir:
 - Si el tiempo de respuesta es alto, revise la carga de la API y su hardware.
 
 ## 10. Soporte
-- Para problemas de conexión, confirme la URL: `http://localhost:8001/api/v1` (o su entorno).
-- Revise la consola donde ejecuta `Dashboard.py` para detalles.
-- Asegúrese de que la API expose `POST /predict` y devuelva `{ "predictions": [...] }`.
+Si el tablero no muestra resultados:
+
+1) Verifique que la API esté activa:
+```
+curl -s http://localhost:8001/api/v1/health
+```
+2) Asegúrese de que el tablero tiene la URL correcta de la API.  
+3) Revise la consola donde ejecutó `Dashboard.py` para posibles errores.  
+4) Revise si su entorno virtual está correctamente activado e instalado.
