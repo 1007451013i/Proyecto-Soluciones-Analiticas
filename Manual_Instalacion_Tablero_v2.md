@@ -52,11 +52,13 @@ pip install ./model-pkg/model_heart-0.1.0-py3-none-any.whl
 
 Existen dos opciones:
 
-```
-#### Opción A: ejecución directa
-python app/main.py
 
+#### Opción A: ejecución directa
+```
+python app/main.py
+```
 #### Opción B: usando tox
+```
 tox run -e test_app
 tox run -e run
 ```
